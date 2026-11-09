@@ -70,6 +70,15 @@ including a separate check for retreat after opening but before first
 contact 16. The later position and velocity bounds may consequently
 charge carry only to the current support between successive contacts.
 
+An independent review found that the original retreat check used the
+fresh spawn position for a return to ledge 0. The corrected audit uses
+the full ledge-0 landing interval, x in [21, 145] with outward margins.
+The optimistic suffix from that interval takes at least 1,592 ticks
+with the press closed and 1,551 with it open. The first possible higher
+landing is tick 68 and the first possible press opening is tick 896.
+The full interval therefore still excludes every retreat to ledge 0
+by the reset deadline.
+
 The momentum calculation retains time, position intervals and velocity
 bins. It allocates acceleration optimistically on each side of a
 transfer, and accounts for the velocity reset on the press wall
@@ -113,6 +122,26 @@ Counting the two mandatory ascents and complete dash cycles therefore
 forces ledge 13 at 728 with x ≥ 158.405427. The backward screen forces
 ledge 11 at 617 and ledge 12 at 672. The admitted x interval on ledge 11
 is contained in **[158, 168]**.
+
+The tick constraints can also be checked directly from the projected
+profile. At tick 846, entry needs x ≥ 335.599879 and allows vx ≤
+118.333335, so the prior x must be at least 334.613767. From ledge 13
+at tick 729 or later, at most 116 updates remain before that prior
+state. At least 73 are ordinary updates, leaving at most two full
+dashes. Even at maximum speed the player could get only to x ≈ 334.15
+from the right edge of ledge 13 at x ≈ 159. This leaves tick 728, the
+earliest admitted ledge-13 contact.
+
+The transfer from ledge 12 to the required x on ledge 13 spans over
+75 units and needs at least 38 ordinary updates. A landing on 12 at
+673 or later would leave at most 55 ticks, too little for those
+updates plus a full dash. Ordinary movement alone cannot bridge
+the gap. The earliest admitted ledge-12 contact is 672. The projected
+ledge-11 cells for ticks 618–623 have x ≥ 151.733326, over 68 units
+from ledge 12. At most 54 ticks would remain, too few for 37 ordinary
+updates and a full dash. Ordinary movement plus maximum platform
+carry covers at most 66.33 units in that time. The earliest admitted
+ledge-11 contact is 617.
 
 ## The impossible 55-update handoff
 
@@ -166,6 +195,12 @@ before testing hazards, so the pre-snap height envelope is inappropriate
 for that update. Both the 1,646 exclusion and the 1,647 control reproduced
 byte-identical frontier profiles in `contact-publish-check-1646` and
 `contact-publish-check-1647`.
+
+The independent review also checked the arithmetic linking the press
+entry to the exact ledge-11 and ledge-12 ticks. A fresh run from the
+archived projection source reproduced the contact cells in all 1,644
+complete tick layers. Reapplying the contact screen and press bound
+reproduced both downstream frontier files byte for byte.
 
 - [Negative result](contact-audit-fixed-1646/result.json)
 - [Matching 1,647 control](contact-audit-fixed-1647/result.json)

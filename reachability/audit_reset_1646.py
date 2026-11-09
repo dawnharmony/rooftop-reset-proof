@@ -14,6 +14,7 @@ DATA = ROOT / 'hybrid'
 sys.path.insert(0, str(ROOT / 'pilot'))
 
 from hybrid_bounds import ceildiv, vertical_minima
+from hybrid_backtrack_check import retreat_suffixes
 from hybrid_interval_bounds import T, propagate
 from hybrid_saw_transfer import transfer
 from hybrid_time_potential import TimePotential
@@ -142,18 +143,21 @@ def check_phase(constants, engine_hash):
             assert calculated[tick] == expected, (node, tick)
 
     p = TimePotential(1646)
+    back = retreat_suffixes(p, constants)
     tested = 0
     for high in range(1, 29):
         first = p.first[high if high <= 15 else high + 2]
         kind = 'closed' if high <= 15 else 'opened'
         for low in range(high):
-            assert all(p.back[kind][low][1646 - t] is None for t in range(first, 1647))
+            assert all(back[kind][low][1646 - t] is None for t in range(first, 1647))
             tested += 1
     for low in range(15):
-        assert all(p.back['opened'][low][1646 - t] is None for t in range(p.first[17], 1647))
+        assert all(back['opened'][low][1646 - t] is None for t in range(p.first[17], 1647))
     assert retreat['pairsExcludedEvenWithFreeInstantRetreat'] == tested == 406
     assert retreat['allBackwardLandingsExcluded']
-    return tested
+    ledge_zero_minima = {name: next(t for t, row in enumerate(profiles[0]) if row is not None)
+                         for name, profiles in back.items()}
+    return tested, ledge_zero_minima
 
 
 def replay_engine():
@@ -199,7 +203,7 @@ def main():
     constants = read(ROOT / 'constants.json')
     assert constants['engineSHA256'] == engine_hash and constants['dt'] == 1 / 120
     original = replay_engine()
-    retreat_pairs = check_phase(constants, engine_hash)
+    retreat_pairs, ledge_zero_minima = check_phase(constants, engine_hash)
     negative, negative_depth = check_lineage(1646, engine_hash)
     positive, positive_depth = check_lineage(1647, engine_hash)
     negative_profile = read(DATA / negative[-2]['name'] / 'frontiers.json')
@@ -219,6 +223,7 @@ def main():
     control = read(DATA / positive[-1]['name'] / 'result.json')
     assert control['earliestPossibleReset'] == 1647 and control['recordContactsAdmitted'] == 32
     report = {'engineSHA256': engine_hash, 'targetResetTick': 1646, 'retreatPairs': retreat_pairs,
+              'fullLedgeZeroSuffixTicks': ledge_zero_minima,
               'originalEngineReplay': original,
               'verifiedWorldFrames': 1647, 'projectionDepths': [negative_depth, positive_depth],
               'independentPhaseSamples': 31 * 24, 'widenedSawTransfer': local,

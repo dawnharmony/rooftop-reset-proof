@@ -2,6 +2,10 @@
   "engineSHA256": "0a427d28c8ab60e7ee1dc69f3caa6837cc542bec34a757f4394c7e0e079bd031",
   "targetResetTick": 1646,
   "retreatPairs": 406,
+  "fullLedgeZeroSuffixTicks": {
+    "closed": 1592,
+    "opened": 1551
+  },
   "originalEngineReplay": {
     "physicsFrames": 1661,
     "recordTicks": 1647,
@@ -71,5 +75,5 @@
     }
   ],
   "firstAdmittedControlReset": 1647,
-  "peakJobCommitMiB": 139.6484375
+  "peakJobCommitMiB": 139.27734375
 }
