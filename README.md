@@ -1,6 +1,8 @@
-# Rooftop Reset
+# Rooftop Reset Speedrun
 
-The saved run presses reset in **1,647 physics ticks (13.725 seconds)**. The computational proof excludes any successful reset by tick **1,646** for the exact engine build in this repository.
+The saved Nightmare run presses Reset in **1,647 physics ticks (13.725 seconds)**. The computational proof rules out any successful Nightmare reset by tick **1,646** for the exact engine build in this repository.
+
+This is the only sentence in this repo that isn't written by Sol: GPT-6.1 Sol (medium) ran the experiments and wrote the research code and proof write-up. I only set the goals and steered the research along the way. A separate agent reviewed the proof.
 
 - [Proof and reproduction notes](reachability/hybrid/RESET-1646-PROOF.md)
 - [Recorded run](videos/rooftop-reset-nightmare-13.725.mp4) and [replay inputs](records/13.725/inputs.json)
