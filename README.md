@@ -1,6 +1,6 @@
-# Rooftop Reset — the one-tick gap
+# Rooftop Reset
 
-The saved Nightmare run presses reset in **1,647 physics ticks (13.725 seconds)** with zero deaths. The computational proof excludes any successful reset by tick **1,646** for the exact engine build in this repository.
+The saved run presses reset in **1,647 physics ticks (13.725 seconds)**. The computational proof excludes any successful reset by tick **1,646** for the exact engine build in this repository.
 
 - [Proof and reproduction notes](reachability/hybrid/RESET-1646-PROOF.md)
 - [Recorded run](videos/rooftop-reset-nightmare-13.725.mp4) and [replay inputs](records/13.725/inputs.json)
