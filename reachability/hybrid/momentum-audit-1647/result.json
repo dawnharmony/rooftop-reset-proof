@@ -1,0 +1,249 @@
+{
+  "deadline": 1647,
+  "velocityWidth": 32,
+  "sourceSHA256": "978a0e88dd848119c58980c182fc8bc59c95291dd6b69f83104f78b621b2501a",
+  "possible": true,
+  "excludedInNecessaryModel": false,
+  "scope": "Candidate momentum/phase bound, not yet independently audited or a global optimality certificate",
+  "engineSHA256": "0a427d28c8ab60e7ee1dc69f3caa6837cc542bec34a757f4394c7e0e079bd031",
+  "cancellationDominance": [
+    {
+      "target": 13,
+      "worstMomentumDirectTicks": 92,
+      "bestCanceledTicks": 178
+    },
+    {
+      "target": 14,
+      "worstMomentumDirectTicks": 103,
+      "bestCanceledTicks": 111
+    }
+  ],
+  "layers": [
+    {
+      "node": 1,
+      "times": 33,
+      "velocityCells": 221,
+      "first": 71,
+      "last": 103
+    },
+    {
+      "node": 2,
+      "times": 33,
+      "velocityCells": 215,
+      "first": 124,
+      "last": 156
+    },
+    {
+      "node": 3,
+      "times": 15,
+      "velocityCells": 97,
+      "first": 178,
+      "last": 192
+    },
+    {
+      "node": 4,
+      "times": 23,
+      "velocityCells": 96,
+      "first": 222,
+      "last": 247
+    },
+    {
+      "node": 5,
+      "times": 31,
+      "velocityCells": 151,
+      "first": 283,
+      "last": 319
+    },
+    {
+      "node": 6,
+      "times": 15,
+      "velocityCells": 65,
+      "first": 342,
+      "last": 356
+    },
+    {
+      "node": 7,
+      "times": 15,
+      "velocityCells": 90,
+      "first": 397,
+      "last": 411
+    },
+    {
+      "node": 8,
+      "times": 15,
+      "velocityCells": 90,
+      "first": 451,
+      "last": 465
+    },
+    {
+      "node": 9,
+      "times": 15,
+      "velocityCells": 67,
+      "first": 505,
+      "last": 519
+    },
+    {
+      "node": 10,
+      "times": 30,
+      "velocityCells": 161,
+      "first": 543,
+      "last": 575
+    },
+    {
+      "node": 11,
+      "times": 24,
+      "velocityCells": 131,
+      "first": 617,
+      "last": 640
+    },
+    {
+      "node": 12,
+      "times": 15,
+      "velocityCells": 79,
+      "first": 672,
+      "last": 686
+    },
+    {
+      "node": 13,
+      "times": 23,
+      "velocityCells": 113,
+      "first": 717,
+      "last": 739
+    },
+    {
+      "node": 14,
+      "times": 17,
+      "velocityCells": 88,
+      "first": 781,
+      "last": 797
+    },
+    {
+      "node": 15,
+      "times": 25,
+      "velocityCells": 128,
+      "first": 826,
+      "last": 850
+    },
+    {
+      "node": 16,
+      "times": 12,
+      "velocityCells": 48,
+      "first": 839,
+      "last": 850
+    },
+    {
+      "node": 17,
+      "times": 9,
+      "velocityCells": 9,
+      "first": 903,
+      "last": 911
+    },
+    {
+      "node": 18,
+      "times": 9,
+      "velocityCells": 28,
+      "first": 940,
+      "last": 948
+    },
+    {
+      "node": 19,
+      "times": 26,
+      "velocityCells": 142,
+      "first": 996,
+      "last": 1021
+    },
+    {
+      "node": 20,
+      "times": 21,
+      "velocityCells": 101,
+      "first": 1056,
+      "last": 1076
+    },
+    {
+      "node": 21,
+      "times": 9,
+      "velocityCells": 53,
+      "first": 1123,
+      "last": 1131
+    },
+    {
+      "node": 22,
+      "times": 40,
+      "velocityCells": 175,
+      "first": 1161,
+      "last": 1200
+    },
+    {
+      "node": 23,
+      "times": 21,
+      "velocityCells": 90,
+      "first": 1246,
+      "last": 1266
+    },
+    {
+      "node": 24,
+      "times": 9,
+      "velocityCells": 43,
+      "first": 1303,
+      "last": 1311
+    },
+    {
+      "node": 25,
+      "times": 22,
+      "velocityCells": 113,
+      "first": 1358,
+      "last": 1379
+    },
+    {
+      "node": 26,
+      "times": 25,
+      "velocityCells": 117,
+      "first": 1415,
+      "last": 1439
+    },
+    {
+      "node": 27,
+      "times": 9,
+      "velocityCells": 57,
+      "first": 1469,
+      "last": 1477
+    },
+    {
+      "node": 28,
+      "times": 14,
+      "velocityCells": 58,
+      "first": 1513,
+      "last": 1533
+    },
+    {
+      "node": 29,
+      "times": 11,
+      "velocityCells": 44,
+      "first": 1580,
+      "last": 1590
+    },
+    {
+      "node": 30,
+      "times": 11,
+      "velocityCells": 44,
+      "first": 1636,
+      "last": 1646
+    },
+    {
+      "node": 31,
+      "times": 9,
+      "velocityCells": 9,
+      "first": 1638,
+      "last": 1646
+    }
+  ],
+  "transitionsChecked": 442456,
+  "cache": {
+    "hits": 895266,
+    "misses": 27873,
+    "maxsize": 200000,
+    "currsize": 27873
+  },
+  "seconds": 2.055158899998787,
+  "knownMonotoneRecordAdmitted": "13.725"
+}

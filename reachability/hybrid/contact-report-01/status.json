@@ -1,0 +1,28 @@
+{
+  "state": "abstract-counterexample",
+  "pid": 38640,
+  "process_created": 134386566728279201,
+  "depth": 1644,
+  "limitResetTick": 1646,
+  "regions": 6,
+  "seconds": 63.875,
+  "peakRSSMiB": 212.9921875,
+  "peakJobCommitMiB": 208.56640625,
+  "capReadback": {
+    "flags": 8704,
+    "commitLimitBytes": 1073741824
+  },
+  "sourceSHA256": "18717c915fb3f087ff712c1101258c63f0587c1c8d6dfdc08594436ac6abbf13",
+  "modelDigestConfig": [
+    1646,
+    0,
+    true,
+    14,
+    15,
+    4
+  ],
+  "scope": "global outer model; not machine-checked source refinement",
+  "reason": null,
+  "earliestPossibleReset": 1645,
+  "proposals": 1
+}

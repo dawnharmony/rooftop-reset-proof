@@ -1,0 +1,26 @@
+{
+  "mode": "nightmare",
+  "gameTime": 13.724999999999861,
+  "steps": 1647,
+  "deaths": 0,
+  "won": true,
+  "resetProof": {
+    "frame": 1647,
+    "x": 420.00645389384505,
+    "y": 1105,
+    "ground": 28,
+    "time": 13.724999999999861
+  },
+  "engineSHA256": "0a427d28c8ab60e7ee1dc69f3caa6837cc542bec34a757f4394c7e0e079bd031",
+  "inputSHA256": "b6856c4233651ccd5c9fa4a5a23e6cf71d3ad11a6c42fd237d3c8596b86f509d",
+  "width": 1920,
+  "height": 1080,
+  "requestedFPS": 60,
+  "normalSpeed": true,
+  "startClickAt": 14.35409999999404,
+  "winAt": 28.08019999999702,
+  "wallGameplaySeconds": 13.726100000002981,
+  "recordingSeconds": 31.01929999999702,
+  "mime": "video/webm;codecs=vp9,opus",
+  "bytes": 30178109
+}

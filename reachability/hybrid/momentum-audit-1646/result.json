@@ -1,0 +1,248 @@
+{
+  "deadline": 1646,
+  "velocityWidth": 8,
+  "sourceSHA256": "9b0384c96a8229cae0174e0a587f2e7bab9bcc529f3f2b0d3d69306918c08f72",
+  "possible": true,
+  "excludedInNecessaryModel": false,
+  "scope": "Candidate momentum/phase bound, not yet independently audited or a global optimality certificate",
+  "engineSHA256": "0a427d28c8ab60e7ee1dc69f3caa6837cc542bec34a757f4394c7e0e079bd031",
+  "cancellationDominance": [
+    {
+      "target": 13,
+      "worstMomentumDirectTicks": 92,
+      "bestCanceledTicks": 178
+    },
+    {
+      "target": 14,
+      "worstMomentumDirectTicks": 103,
+      "bestCanceledTicks": 111
+    }
+  ],
+  "layers": [
+    {
+      "node": 1,
+      "times": 32,
+      "velocityCells": 793,
+      "first": 71,
+      "last": 102
+    },
+    {
+      "node": 2,
+      "times": 32,
+      "velocityCells": 770,
+      "first": 124,
+      "last": 155
+    },
+    {
+      "node": 3,
+      "times": 14,
+      "velocityCells": 334,
+      "first": 178,
+      "last": 191
+    },
+    {
+      "node": 4,
+      "times": 19,
+      "velocityCells": 321,
+      "first": 224,
+      "last": 246
+    },
+    {
+      "node": 5,
+      "times": 28,
+      "velocityCells": 560,
+      "first": 287,
+      "last": 318
+    },
+    {
+      "node": 6,
+      "times": 14,
+      "velocityCells": 216,
+      "first": 342,
+      "last": 355
+    },
+    {
+      "node": 7,
+      "times": 14,
+      "velocityCells": 288,
+      "first": 397,
+      "last": 410
+    },
+    {
+      "node": 8,
+      "times": 14,
+      "velocityCells": 288,
+      "first": 451,
+      "last": 464
+    },
+    {
+      "node": 9,
+      "times": 14,
+      "velocityCells": 225,
+      "first": 505,
+      "last": 518
+    },
+    {
+      "node": 10,
+      "times": 28,
+      "velocityCells": 523,
+      "first": 543,
+      "last": 574
+    },
+    {
+      "node": 11,
+      "times": 19,
+      "velocityCells": 438,
+      "first": 617,
+      "last": 639
+    },
+    {
+      "node": 12,
+      "times": 14,
+      "velocityCells": 274,
+      "first": 672,
+      "last": 685
+    },
+    {
+      "node": 13,
+      "times": 21,
+      "velocityCells": 370,
+      "first": 718,
+      "last": 738
+    },
+    {
+      "node": 14,
+      "times": 16,
+      "velocityCells": 301,
+      "first": 782,
+      "last": 797
+    },
+    {
+      "node": 15,
+      "times": 23,
+      "velocityCells": 410,
+      "first": 827,
+      "last": 849
+    },
+    {
+      "node": 16,
+      "times": 11,
+      "velocityCells": 165,
+      "first": 839,
+      "last": 849
+    },
+    {
+      "node": 17,
+      "times": 8,
+      "velocityCells": 8,
+      "first": 903,
+      "last": 910
+    },
+    {
+      "node": 18,
+      "times": 8,
+      "velocityCells": 83,
+      "first": 940,
+      "last": 947
+    },
+    {
+      "node": 19,
+      "times": 25,
+      "velocityCells": 490,
+      "first": 996,
+      "last": 1020
+    },
+    {
+      "node": 20,
+      "times": 20,
+      "velocityCells": 340,
+      "first": 1056,
+      "last": 1075
+    },
+    {
+      "node": 21,
+      "times": 8,
+      "velocityCells": 174,
+      "first": 1123,
+      "last": 1130
+    },
+    {
+      "node": 22,
+      "times": 39,
+      "velocityCells": 567,
+      "first": 1161,
+      "last": 1199
+    },
+    {
+      "node": 23,
+      "times": 20,
+      "velocityCells": 288,
+      "first": 1246,
+      "last": 1265
+    },
+    {
+      "node": 24,
+      "times": 8,
+      "velocityCells": 129,
+      "first": 1303,
+      "last": 1310
+    },
+    {
+      "node": 25,
+      "times": 21,
+      "velocityCells": 363,
+      "first": 1358,
+      "last": 1378
+    },
+    {
+      "node": 26,
+      "times": 24,
+      "velocityCells": 379,
+      "first": 1415,
+      "last": 1438
+    },
+    {
+      "node": 27,
+      "times": 8,
+      "velocityCells": 185,
+      "first": 1469,
+      "last": 1476
+    },
+    {
+      "node": 28,
+      "times": 12,
+      "velocityCells": 175,
+      "first": 1513,
+      "last": 1532
+    },
+    {
+      "node": 29,
+      "times": 10,
+      "velocityCells": 142,
+      "first": 1580,
+      "last": 1589
+    },
+    {
+      "node": 30,
+      "times": 10,
+      "velocityCells": 138,
+      "first": 1636,
+      "last": 1645
+    },
+    {
+      "node": 31,
+      "times": 8,
+      "velocityCells": 8,
+      "first": 1638,
+      "last": 1645
+    }
+  ],
+  "transitionsChecked": 5694143,
+  "cache": {
+    "hits": 11423424,
+    "misses": 458603,
+    "maxsize": 200000,
+    "currsize": 200000
+  },
+  "seconds": 25.14060860000245
+}

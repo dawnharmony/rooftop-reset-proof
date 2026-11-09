@@ -1,0 +1,9 @@
+{
+  "deadline": 1646,
+  "boundsSHA256": "ea986332a617379ede5f450171edd97de91c868ad8d0370cc58b13657497e834",
+  "pairsExcludedEvenWithFreeInstantRetreat": 406,
+  "possiblePairs": [],
+  "opened15PossiblePairs": [],
+  "allBackwardLandingsExcluded": true,
+  "scope": "Necessary prefix/suffix interval overlap, not a concrete route."
+}

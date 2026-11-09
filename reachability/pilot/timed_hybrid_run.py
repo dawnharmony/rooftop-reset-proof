@@ -1,0 +1,193 @@
+"""Global forward outer reachability with mandatory-contact deadline pruning.
+
+Fresh-spawn coverage, continuous steering, all supports/backtracking. A budget
+stop retains the last FULL layer and never means UNSAT. Product hull merges
+enclose unions. No stored representative is used to discard a region.
+"""
+import argparse, hashlib, json, math, mmap, msvcrt, os, sqlite3, struct, sys, time
+from pathlib import Path
+from dataclasses import replace
+from fractions import Fraction
+from resources import Job, memory, available, identity
+from manager import atomic
+from fast_geometry import install
+install()
+from timed_kernel import seed, successors, key, merge, bounds, Y
+from timed_kernel import pack, unpack
+from kernel import clip, contains, SCALE
+
+HERE=Path(__file__).resolve().parent; ROOT=HERE.parents[1]
+
+class Potential:
+    def __init__(self):
+        self.data=json.loads((ROOT/'reachability/hybrid/bounds.json').read_text())
+        self.unit=self.data['unit']
+        self.cache={}
+    def remaining(self,r):
+        # Ground states must reascend through all higher supports even if
+        # their history visited higher ledges before returning here.
+        x0,x1,_,_=bounds(r.p)
+        i=min(28,r.anchor+1)
+        if r.anchor==28:i=28
+        # Distance to the next mandatory support. No flight-duration debit
+        # is charged here: part of that flight may already have elapsed.
+        spatial=(math.floor(x0*1000),math.ceil(x1*1000))
+        m=self.data['minimumNonDashUpdates'][i] if r.g>=0 and r.g<28 else 0
+        cachekey=(i,spatial,m,r.anchor==28)
+        if cachekey not in self.cache:
+            lo,hi=spatial[0]*1000,spatial[1]*1000
+            if r.anchor==28:
+                # A retained ground flag can sit just beyond a ledge edge
+                # until the next update. Use current x, not contact-cell lookup.
+                choices=[((420*self.unit,450*self.unit),1)]
+            else:choices=zip(self.data['supports'][i],self.data['backward'][i])
+            self.cache[cachekey]=min(max(m,-(-((max(0,a-hi,lo-b)-170001)*120+(332400001-127000001)*m)//332400001))+v for (a,b),v in choices)
+            if len(self.cache)>100000:self.cache.clear()
+        return self.cache.get(cachekey,0)
+
+from hybrid_time_potential import TimePotential
+Potential=TimePotential
+
+def run(a):
+    import timed_kernel
+    timed_kernel.configure(a.refine_from,a.refine_through,a.timing_bin,a.monotone)
+    assert not a.import_frontier, "Timed schema requires a fresh global entry or its own checkpoint"
+    folder=a.folder.resolve();folder.mkdir(parents=True,exist_ok=True)
+    lock=(folder/'manager.lock').open('a+b');lock.write(b'0');lock.flush();lock.seek(0);msvcrt.locking(lock.fileno(),msvcrt.LK_NBLCK,1)
+    if a.resume:(folder/'pause.request').unlink(missing_ok=True)
+    if a.clear_global_pause:(HERE/'global-pause.request').unlink(missing_ok=True)
+    if (folder/'pause.request').exists() or (HERE/'global-pause.request').exists():raise SystemExit('User pause preserved')
+    guard=Job(1024);entry=HERE/'active'/f'{os.getpid()}.json';atomic(entry,{'pid':os.getpid(),'process_created':identity(os.getpid()),'folder':str(folder),'role':'global hybrid reachability'})
+    atomic(HERE/'resume-target.json',{'backend':'hybrid-timed','folder':str(folder),'cap':a.cap,'seconds':a.seconds,'limit':a.limit,'cell':a.cell,'monotone':a.monotone,'positive_control':a.positive_control,'refine_from':a.refine_from,'refine_through':a.refine_through,'timing_bin':a.timing_bin})
+    sources=['timed_hybrid_run.py','timed_kernel.py','hybrid_time_potential.py','correlated_kernel.py','branch_kernel.py','kernel.py','fast_geometry.py']
+    digest=hashlib.sha256(b''.join((HERE/n).read_bytes() for n in sources)+b''.join((ROOT/'reachability'/n).read_bytes() for n in ['hybrid_interval_bounds.py','hybrid_gate_bounds.py','hybrid_bounds.py','hybrid/gate-bounds.json','hybrid/phase-bounds.json','constants.json'])+json.dumps([a.limit,a.cell,a.monotone,a.refine_from,a.refine_through,a.timing_bin]).encode()).hexdigest()
+    c=json.loads((ROOT/'reachability/constants.json').read_text());record=c['records']['13.725']
+    assert c['engineSHA256']==hashlib.sha256((ROOT/'engine.js').read_bytes()).hexdigest()
+    contact = None
+    contact_files = []
+    assert not a.contact_report or a.contact_screen, 'Contact reporting requires a screen'
+    if a.contact_screen:
+        assert a.monotone or a.positive_control, 'First-contact screen requires monotone scope'
+        from contact_potential import ContactPotential
+        screen = a.contact_screen.resolve()
+        contact = ContactPotential(screen, a.limit, c, air_deadline=a.air_deadline,
+                                   gate_partition=a.gate_partition, saw_partition=a.saw_partition)
+        contact_files = [screen, screen.with_name('result.json'), HERE/'contact_potential.py',
+                         ROOT/'reachability/hybrid_contact_screen.py', ROOT/'reachability/hybrid_momentum_bounds.py',
+                         ROOT/'reachability/hybrid/monotone-bounds.json']
+        digest = hashlib.sha256(digest.encode() + b''.join(f.read_bytes() for f in contact_files)).hexdigest()
+        if a.air_deadline:
+            digest = hashlib.sha256(digest.encode() + b'air-deadline').hexdigest()
+        if a.gate_partition:
+            digest = hashlib.sha256(digest.encode() + b'gate-partition').hexdigest()
+        if a.contact_report:
+            digest = hashlib.sha256(digest.encode() + b'contact-report').hexdigest()
+        if a.saw_partition:
+            digest = hashlib.sha256(digest.encode() + b'saw-partition').hexdigest()
+        target = HERE/'resume-target.json'
+        atomic(target, {**json.loads(target.read_text()), 'contact_screen': str(screen),
+                        'air_deadline': a.air_deadline, 'gate_partition': a.gate_partition,
+                        'contact_report': a.contact_report, 'saw_partition': a.saw_partition})
+    db=sqlite3.connect(folder/'frontier.sqlite');db.executescript('PRAGMA journal_mode=WAL; CREATE TABLE IF NOT EXISTS checkpoint(id INTEGER PRIMARY KEY,depth INTEGER,sha TEXT,blob BLOB); CREATE TABLE IF NOT EXISTS metrics(depth INTEGER PRIMARY KEY,data TEXT);')
+    db.execute('CREATE TABLE IF NOT EXISTS history(depth INTEGER PRIMARY KEY,sha TEXT,blob BLOB)')
+    old=db.execute('SELECT depth,sha,blob FROM checkpoint WHERE id=0').fetchone()
+    if old:
+        depth,sha,blob=old;assert sha==digest,'Incompatible source/bounds; preserve archive and choose a new folder';front=unpack(blob)
+    else:
+        depth=0;front=[seed(record['states'][0])]
+        if a.import_frontier:
+            ancestor=sqlite3.connect('file:'+str(a.import_frontier.resolve()/'frontier.sqlite')+'?mode=ro',uri=True)
+            depth,oldsha,blob=ancestor.execute('SELECT depth,sha,blob FROM checkpoint WHERE id=0').fetchone();ancestor.close()
+            oldsources=['hybrid_run.py','correlated_kernel.py','branch_kernel.py','kernel.py','fast_geometry.py']
+            expected=hashlib.sha256(b''.join((HERE/n).read_bytes() for n in oldsources)+(ROOT/'reachability/hybrid/bounds.json').read_bytes()).hexdigest()
+            assert oldsha==expected,'Ancestor model/source mismatch'
+            assert depth<a.limit-1
+            front=unpack(blob)
+            atomic(folder/'ancestor.json',{'folder':str(a.import_frontier.resolve()),'depth':depth,'sourceSHA256':oldsha,'frontierSHA256':hashlib.sha256(blob).hexdigest(),'reason':'Continue global outer superset with strengthened necessary guards; no old state is asserted concrete'})
+        db.execute('INSERT INTO checkpoint VALUES(0,?,?,?)',(depth,digest,pack(front)));db.commit()
+    worldfile=(HERE/'run/world.bin').open('rb');worldmap=mmap.mmap(worldfile.fileno(),0,access=mmap.ACCESS_READ)
+    def world(n):return [struct.unpack_from('<ddd',worldmap,(n*29+i)*24) for i in range(29)]
+    potential=Potential(a.limit,a.monotone)
+    def oracle_viable(t):
+        point = seed(record['states'][t])
+        if not potential.viable(point, t):
+            return False
+        return not contact or t == 0 or bool(contact.prune_parts(seed(record['states'][t-1]), point, t))
+    oracleAlive=all(oracle_viable(t) for t in range(min(depth+1,len(record['states'])-1)));began=time.monotonic();peak=0;lastbeat=0;reason=None
+    def status(state,**more):
+        nonlocal peak
+        mem=memory(os.getpid());peak=max(peak,mem['rss'])
+        atomic(folder/'status.json',{'state':state,'pid':os.getpid(),'process_created':identity(os.getpid()),'depth':depth,'limitResetTick':a.limit,'regions':len(front),'seconds':time.monotonic()-began,'peakRSSMiB':peak/2**20,'peakJobCommitMiB':guard.peak()/2**20,'capReadback':guard.configured_limit(),'sourceSHA256':digest,'modelDigestConfig':[a.limit,a.cell,a.monotone,a.refine_from,a.refine_through,a.timing_bin],'scope':'global outer model; not machine-checked source refinement','reason':reason,'projectedNodes':contact.projected_nodes if a.contact_report else (),**more})
+    def interrupt():
+        if (folder/'pause.request').exists() or (HERE/'global-pause.request').exists():return 'pause requested'
+        if time.monotonic()-began>=a.seconds:return 'session time budget'
+        if available()<8192*2**20:return '8 GiB RAM reserve'
+        if memory(os.getpid())['private']>768*2**20:return 'soft memory guard'
+        if sum(f.stat().st_size for f in folder.iterdir() if f.is_file())>256*2**20:return 'disk guard'
+    try:
+        status('running')
+        from hybrid_snapshot import snapshot_generic
+        snapshot_generic(folder,[HERE/n for n in sources]+[ROOT/'reachability'/n for n in ['hybrid_interval_bounds.py','hybrid_gate_bounds.py','hybrid_bounds.py','hybrid/gate-bounds.json','hybrid/phase-bounds.json','constants.json']]+[ROOT/'engine.js',HERE/'run/world.bin',HERE/'geometry_cache.py',ROOT/'reachability/hybrid/backtrack-check.json']+contact_files,digest)
+        while depth<a.limit-1 and front:
+            nxt={};generated=pruned=0;t=time.monotonic();n=depth+1
+            frame=world(n)
+            contact_cells={}
+            for index,r in enumerate(front):
+                if index%8==0:
+                    reason=interrupt()
+                    if reason:break
+                    if time.monotonic()-lastbeat>=1:status('running',expandingParent=index,nextRegions=len(nxt));lastbeat=time.monotonic()
+                for q in successors(r,frame,28):
+                    generated+=1
+                    if a.monotone and q.g>=0 and q.g<r.anchor:pruned+=1;continue
+                    floor=max(-24,Y[q.anchor]-155)
+                    z=clip(q.z,0,floor*SCALE-1,True)
+                    if not z:pruned+=1;continue
+                    q=replace(q,z=z)
+                    q=potential.prune(q,n)
+                    if q is None:pruned+=1;continue
+                    parts = contact.prune_parts(r, q, n) if contact else (q,)
+                    if not parts:pruned+=1;continue
+                    contact_node = contact.projection_node(r, q) if a.contact_report else None
+                    # Fixed resource-key union enclosure: no event history is
+                    # silently deleted. The broad product can yield false wins.
+                    for part in parts:
+                        if a.contact_report and contact_node in contact.projected_nodes:
+                            contact.record_contact(contact_cells, contact_node, part)
+                        k=key(part,a.cell if a.refine_from<=part.anchor<=a.refine_through else 0)
+                        if contact:k+=contact.partition(part)
+                        if k in nxt:nxt[k],_=merge(nxt[k],part,16)
+                        else:nxt[k]=part
+                        if len(nxt)>a.cap:reason='frontier region budget';break
+                    if reason:break
+                if reason:break
+            if reason:status('paused' if reason=='pause requested' else 'budget-stopped',attemptedDepth=n,partialGenerated=generated);return
+            front=list(nxt.values());depth=n
+            # Preserve known record inclusion whenever it remains within the
+            # requested deadline potential. A failed sample flags a model bug;
+            # passing samples do not establish universal soundness.
+            if n<len(record['states']):
+                s=record['states'][n];oracle=seed(s)
+                oracleAlive=oracleAlive and oracle_viable(n)
+                if a.limit>=len(record['inputs']):assert oracleAlive,('positive control rejected',n)
+                if oracleAlive:
+                    p=(Fraction(s['p']['x'])*SCALE,Fraction(s['p']['vx'])*SCALE)
+                    z=(Fraction(s['p']['y'])*SCALE,Fraction(s['p']['vy'])*SCALE)
+                    assert any(q.discrete()[:8]==oracle.discrete()[:8] and contains(q.p,p) and contains(q.z,z) for q in front),('record lost',n)
+            wins=[q for q in front if q.g==28 and clip(clip(q.p,0,420*SCALE-1,True),0,450*SCALE+1,False)
+                  and (not contact or contact.admits_reset(q, n))]
+            metric={'depth':depth,'regions':len(front),'generated':generated,'pruned':pruned,'seconds':time.monotonic()-t,'highestSupport':max((q.anchor for q in front),default=-1),'possibleWins':len(wins)}
+            if a.contact_report:metric['firstContactCells']=contact_cells
+            db.execute('UPDATE checkpoint SET depth=?,blob=? WHERE id=0',(depth,pack(front)));db.execute('INSERT OR REPLACE INTO metrics VALUES(?,?)',(depth,json.dumps(metric)))
+            if depth%16==0:db.execute('INSERT OR REPLACE INTO history VALUES(?,?,?)',(depth,digest,pack(front)))
+            db.commit()
+            status('running',lastLayer=metric)
+            if wins and not a.positive_control:
+                proposals=[{'tick':depth,'trace':list(q.trace),'discrete':q.discrete(),'horizontal':q.p,'vertical':q.z} for q in wins]
+                atomic(folder/'abstract-goals.json',proposals);status('abstract-counterexample',earliestPossibleReset=depth+1,proposals=len(proposals));return
+        status('positive-control-complete',recordEnclosedThroughTick=depth) if a.positive_control and front and depth==a.limit-1 else status('excluded-in-outer-model',soundnessReviewRequired=True) if not front or depth==a.limit-1 else status('incomplete')
+    finally:
+        db.close();worldmap.close();worldfile.close();entry.unlink(missing_ok=True);lock.close()
+
+if __name__=='__main__':
+    p=argparse.ArgumentParser();p.add_argument('--folder',type=Path,required=True);p.add_argument('--seconds',type=float,default=60);p.add_argument('--cap',type=int,default=20000);p.add_argument('--limit',type=int,default=1646);p.add_argument('--resume',action='store_true');p.add_argument('--import-frontier',type=Path);p.add_argument('--positive-control',action='store_true');p.add_argument('--cell',type=float,default=0);p.add_argument('--monotone',action='store_true');p.add_argument('--refine-from',type=int,default=0);p.add_argument('--refine-through',type=int,default=28);p.add_argument('--timing-bin',type=int,default=4);p.add_argument('--clear-global-pause',action='store_true');p.add_argument('--contact-screen',type=Path);p.add_argument('--air-deadline',action='store_true');p.add_argument('--gate-partition',action='store_true');p.add_argument('--contact-report',action='store_true');p.add_argument('--saw-partition',action='store_true');run(p.parse_args())

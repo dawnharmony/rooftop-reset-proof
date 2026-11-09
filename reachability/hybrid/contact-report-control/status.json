@@ -1,0 +1,27 @@
+{
+  "state": "positive-control-complete",
+  "pid": 33148,
+  "process_created": 134386566414427068,
+  "depth": 1646,
+  "limitResetTick": 1647,
+  "regions": 4,
+  "seconds": 30.32800000000134,
+  "peakRSSMiB": 168.64453125,
+  "peakJobCommitMiB": 160.734375,
+  "capReadback": {
+    "flags": 8704,
+    "commitLimitBytes": 1073741824
+  },
+  "sourceSHA256": "3b73d48347d5dd2628a926a914a2325dacbccbbe218456939190abcf5befaaeb",
+  "modelDigestConfig": [
+    1647,
+    0,
+    false,
+    29,
+    28,
+    4
+  ],
+  "scope": "global outer model; not machine-checked source refinement",
+  "reason": null,
+  "recordEnclosedThroughTick": 1646
+}

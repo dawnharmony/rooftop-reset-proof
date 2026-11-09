@@ -1,0 +1,75 @@
+{
+  "engineSHA256": "0a427d28c8ab60e7ee1dc69f3caa6837cc542bec34a757f4394c7e0e079bd031",
+  "targetResetTick": 1646,
+  "retreatPairs": 406,
+  "originalEngineReplay": {
+    "physicsFrames": 1661,
+    "recordTicks": 1647,
+    "resetPressed": true
+  },
+  "verifiedWorldFrames": 1647,
+  "projectionDepths": [
+    1644,
+    1646
+  ],
+  "independentPhaseSamples": 744,
+  "widenedSawTransfer": {
+    "tested": 73,
+    "survived": 0,
+    "fallback": 0
+  },
+  "negativeLineage": [
+    {
+      "name": "momentum-1646-air-v8",
+      "profileSHA256": "77fb51855c74fcbebac309c799b986e0c1dd42ebf9aca029413cf210ee6728d2"
+    },
+    {
+      "name": "contact-entry-1646",
+      "profileSHA256": "d821e188a154691c2b112e4c190b2fa94050168d57ebe0af0fd2a9968d951be0"
+    },
+    {
+      "name": "contact-fine-1646",
+      "profileSHA256": "408f7b1a8ecc04c601d7b7ebcebed4dab99a3bab68479e1fa28e4efa1055663e"
+    },
+    {
+      "name": "contact-projected-1646",
+      "profileSHA256": "0e9af73d4ab9eacdabe953d9b0b44f425cffeda15b72d27f03ec96101046e35c"
+    },
+    {
+      "name": "contact-audit-macro-1646",
+      "profileSHA256": "b9c78d2700b1960dc49068977732795c88217605f0f35ab7d1c22a7820d07cf5"
+    },
+    {
+      "name": "contact-audit-fixed-1646",
+      "profileSHA256": "763cd2cbce2902d7acd613752670b4bcc0d97e820cf71ddbb3a2b35613bb24e4"
+    }
+  ],
+  "positiveLineage": [
+    {
+      "name": "momentum-1647-air-control",
+      "profileSHA256": "d80595358344a07b909d0a889bd332d7f6cd11cc901ddc2aec282e949b5e1ffe"
+    },
+    {
+      "name": "contact-entry-1647",
+      "profileSHA256": "76dac690d024e5cc0fc4541fc87fb427853918b645f0b0c7500c0641c9621387"
+    },
+    {
+      "name": "contact-fine-1647",
+      "profileSHA256": "8e5f4e17e9fcd9ac5febf81158bcaf38c187b09d0a7e0b7d107d5b0a562d232a"
+    },
+    {
+      "name": "contact-projected-1647",
+      "profileSHA256": "4a68a3b95244138befc3aba3993daed63f90f992f4e6272c3971f50151a90c07"
+    },
+    {
+      "name": "contact-audit-macro-1647",
+      "profileSHA256": "ff7090d65964d6eb1edbb66eb231fd04fb3c0940a9281ed23dc59293e4a21e05"
+    },
+    {
+      "name": "contact-audit-fixed-1647",
+      "profileSHA256": "a4ee26a3557d779882b2c663c619da8afbe65536159c5995152783107a48f5c0"
+    }
+  ],
+  "firstAdmittedControlReset": 1647,
+  "peakJobCommitMiB": 139.6484375
+}
